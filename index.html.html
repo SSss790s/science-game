@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Grade 10 Science Challenge</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #eef4ff, #ffffff, #f7f9fc);
+      color: #1f2937;
+    }
+    .container { max-width: 1150px; margin: 0 auto; padding: 24px; }
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 26px;
+      padding: 34px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+      margin-bottom: 24px;
+    }
+    .hero h1 { margin: 0 0 10px; font-size: 42px; }
+    .hero p { margin: 0; color: #dbeafe; line-height: 1.6; font-size: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .chip {
+      background: rgba(255,255,255,0.12);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+    .topic-title { font-size: 24px; margin: 0 0 10px; }
+    .topic-desc { color: #475569; line-height: 1.6; min-height: 96px; }
+    .meta { color: #64748b; font-size: 14px; margin-top: 8px; }
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    .primary { background: #2563eb; color: white; }
+    .secondary { background: #e2e8f0; color: #0f172a; }
+    .green { background: #16a34a; color: white; }
+    .hidden { display: none; }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .question {
+      font-size: 28px;
+      margin: 0 0 18px;
+      line-height: 1.45;
+    }
+    .options { display: grid; gap: 12px; }
+    .option {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      border: 2px solid #e2e8f0;
+      color: #1f2937;
+      padding: 16px;
+      border-radius: 16px;
+    }
+    .option:hover { border-color: #94a3b8; background: #f8fafc; }
+    .correct { background: #ecfdf5; border-color: #22c55e; }
+    .wrong { background: #fef2f2; border-color: #ef4444; }
+    .explanation {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #f8fafc;
+      color: #334155;
+      line-height: 1.65;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .stat {
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+    }
+    .stat h3 { margin: 0; font-size: 14px; color: #64748b; }
+    .stat p { margin: 10px 0 0; font-size: 28px; font-weight: bold; }
+    .footer-note { text-align: center; color: #64748b; font-size: 14px; margin-top: 24px; }
+    .tiny { font-size: 13px; color: #64748b; margin-top: 8px; }
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 32px; }
+      .question { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>Advanced Grade 10 Science Challenge</h1>
+      <p>
+        A harder science quiz website with astronomy, immunity, and chemical naming topics.
+        Test yourself on Kepler’s Laws, B cells and T cells, the immune system, binary molecules, and oxyanions.
+      </p>
+      <div class="chips">
+        <div class="chip">Harder questions</div>
+        <div class="chip">Single-file website</div>
+        <div class="chip">Ready to share</div>
+      </div>
+    </section>
+
+    <section id="topicSection">
+      <div class="grid" id="topicGrid"></div>
+    </section>
+
+    <section id="gameSection" class="hidden card">
+      <div class="topbar">
+        <div class="pill" id="topicLabel"></div>
+        <div class="pill" id="progressLabel"></div>
+        <div class="pill" id="scoreLabel"></div>
+      </div>
+      <h2 class="question" id="questionText"></h2>
+      <div class="options" id="optionsBox"></div>
+      <div class="explanation hidden" id="explanationBox"></div>
+      <div class="actions">
+        <button class="primary hidden" id="nextButton">Next Question</button>
+        <button class="secondary" id="backButton">Back to Topics</button>
+      </div>
+    </section>
+
+    <section id="resultSection" class="hidden card">
+      <h2 id="resultTitle">Well done!</h2>
+      <p id="resultText"></p>
+      <div class="stats">
+        <div class="stat">
+          <h3>Final Score</h3>
+          <p id="finalScore"></p>
+        </div>
+        <div class="stat">
+          <h3>Accuracy</h3>
+          <p id="accuracy"></p>
+        </div>
+        <div class="stat">
+          <h3>Stars</h3>
+          <p id="stars"></p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="green" id="playAgainButton">Play Again</button>
+        <button class="secondary" id="chooseButton">Choose Another Topic</button>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Save this as <strong>index.html</strong> or upload it to Netlify Drop to get a shareable link.
+    </div>
+  </div>
+
+  <script>
+    const questions = {
+      Astronomy: [
+        {
+          question: "Kepler's First Law states that planets move in what kind of orbit around the Sun?",
+          options: ["Perfect circles with the Sun at the center", "Ellipses with the Sun at one focus", "Parabolas with the Sun at the vertex", "Random paths based on gravity only"],
+          answer: "Ellipses with the Sun at one focus",
+          explanation: "Kepler's First Law says each planet moves in an ellipse, and the Sun is located at one focus, not at the center."
+        },
+        {
+          question: "According to Kepler's Second Law, when a planet is closer to the Sun, it:",
+          options: ["Moves more slowly to stay in orbit", "Moves at the same speed all year", "Moves faster so equal areas are swept in equal times", "Stops accelerating"],
+          answer: "Moves faster so equal areas are swept in equal times",
+          explanation: "A planet speeds up near the Sun and slows down farther away so that the line from the Sun to the planet sweeps equal areas in equal times."
+        },
+        {
+          question: "If one planet has a larger average distance from the Sun than another, Kepler's Third Law predicts it will generally have:",
+          options: ["A shorter period", "A longer period", "The same period", "No predictable period"],
+          answer: "A longer period",
+          explanation: "Kepler's Third Law relates orbital period and orbital distance: planets farther from the Sun take longer to complete one orbit."
+        },
+        {
+          question: "In the equation T² ∝ r³, the symbol T represents:",
+          options: ["Temperature", "Time for one orbit", "Tension", "Tidal force"],
+          answer: "Time for one orbit",
+          explanation: "In Kepler's Third Law, T is the orbital period, the time a planet takes to complete one orbit."
+        },
+        {
+          question: "If a planet's orbital radius increases, which quantity increases even more strongly according to Kepler's Third Law?",
+          options: ["Its mass", "Its average temperature", "The square of its orbital period", "Its density"],
+          answer: "The square of its orbital period",
+          explanation: "Kepler's Third Law says T² is proportional to r³, so orbital period grows significantly as orbital radius increases."
+        }
+      ],
+      Immunity: [
+        {
+          question: "Which immune cell can mature into a plasma cell and produce antibodies?",
+          options: ["B cell", "Helper T cell", "Macrophage", "Red blood cell"],
+          answer: "B cell",
+          explanation: "B cells are responsible for antibody production. After activation, many become plasma cells that secrete antibodies."
+        },
+        {
+          question: "Which type of T cell directly destroys infected body cells?",
+          options: ["Helper T cell", "Memory B cell", "Cytotoxic T cell", "Platelet"],
+          answer: "Cytotoxic T cell",
+          explanation: "Cytotoxic T cells attack and destroy infected or abnormal body cells."
+        },
+        {
+          question: "What is the main role of helper T cells?",
+          options: ["Produce oxygen", "Coordinate immune responses by activating other immune cells", "Digest pathogens directly", "Create red blood cells"],
+          answer: "Coordinate immune responses by activating other immune cells",
+          explanation: "Helper T cells release signals that activate B cells, cytotoxic T cells, and other parts of the immune response."
+        },
+        {
+          question: "Why does the immune system respond faster the second time a pathogen enters the body?",
+          options: ["The pathogen becomes weaker", "Memory cells remain from the first exposure", "Red blood cells multiply", "The skin becomes thicker"],
+          answer: "Memory cells remain from the first exposure",
+          explanation: "Memory B cells and memory T cells help the immune system recognize the pathogen quickly during future infections."
+        },
+        {
+          question: "Which statement best compares B cells and T cells?",
+          options: ["B cells make antibodies, while T cells mainly help regulate or kill infected cells", "B cells kill viruses directly and T cells carry oxygen", "B cells and T cells are exactly the same", "T cells only work in the bloodstream and B cells only work in the lungs"],
+          answer: "B cells make antibodies, while T cells mainly help regulate or kill infected cells",
+          explanation: "B cells are central to antibody-mediated immunity, while T cells coordinate immune responses or kill infected cells."
+        }
+      ],
+      "Chemical Naming": [
+        {
+          question: "What is the correct name for CO₂?",
+          options: ["Carbon oxide", "Carbon dioxide", "Cobalt dioxide", "Monocarbon oxygen"],
+          answer: "Carbon dioxide",
+          explanation: "For binary molecular compounds, prefixes show the number of atoms. CO₂ has one carbon and two oxygen atoms: carbon dioxide."
+        },
+        {
+          question: "What is the correct name for N₂O₄?",
+          options: ["Dinitrogen tetroxide", "Nitrogen oxide", "Dinitrogen oxide four", "Nitrogen tetraoxide"],
+          answer: "Dinitrogen tetroxide",
+          explanation: "N₂O₄ is named dinitrogen tetroxide. The 'a' in tetra is commonly dropped before oxide."
+        },
+        {
+          question: "Which rule is used when naming binary molecular compounds?",
+          options: ["Use Roman numerals only", "Use prefixes to show the number of atoms", "Always end both elements with -ium", "Name the second element exactly as written in the periodic table"],
+          answer: "Use prefixes to show the number of atoms",
+          explanation: "Binary molecular compounds use prefixes like mono-, di-, tri-, tetra-, and the second element ends in -ide."
+        },
+        {
+          question: "What is the name of the oxyanion NO₃⁻?",
+          options: ["Nitrite", "Nitrate", "Nitride", "Nitrogen oxide"],
+          answer: "Nitrate",
+          explanation: "For common oxyanions, the form with more oxygen often ends in -ate, while the form with less oxygen ends in -ite."
+        },
+        {
+          question: "Which pair is correctly matched?",
+          options: ["SO₃²⁻ = sulfate", "SO₄²⁻ = sulfite", "SO₄²⁻ = sulfate", "NO₂⁻ = nitrate"],
+          answer: "SO₄²⁻ = sulfate",
+          explanation: "Sulfate is SO₄²⁻ and sulfite is SO₃²⁻. Likewise, nitrate is NO₃⁻ and nitrite is NO₂⁻."
+        }
+      ]
+    };
+
+    const topicDescriptions = {
+      Astronomy: "Kepler's Laws, orbital speed, ellipses, and period-distance relationships.",
+      Immunity: "B cells, T cells, memory cells, antibodies, and immune responses.",
+      "Chemical Naming": "Binary molecular compounds, prefixes, oxyanions, and naming rules."
+    };
+
+    const topicMeta = {
+      Astronomy: "5 harder astronomy questions",
+      Immunity: "5 immunity system questions",
+      "Chemical Naming": "5 naming and oxyanion questions"
+    };
+
+    const topicGrid = document.getElementById("topicGrid");
+    const topicSection = document.getElementById("topicSection");
+    const gameSection = document.getElementById("gameSection");
+    const resultSection = document.getElementById("resultSection");
+    const questionText = document.getElementById("questionText");
+    const optionsBox = document.getElementById("optionsBox");
+    const explanationBox = document.getElementById("explanationBox");
+    const topicLabel = document.getElementById("topicLabel");
+    const progressLabel = document.getElementById("progressLabel");
+    const scoreLabel = document.getElementById("scoreLabel");
+    const nextButton = document.getElementById("nextButton");
+    const backButton = document.getElementById("backButton");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const finalScore = document.getElementById("finalScore");
+    const accuracy = document.getElementById("accuracy");
+    const stars = document.getElementById("stars");
+    const playAgainButton = document.getElementById("playAgainButton");
+    const chooseButton = document.getElementById("chooseButton");
+
+    let currentTopic = "";
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function renderTopics() {
+      topicGrid.innerHTML = "";
+      Object.keys(questions).forEach(topic => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h2 class="topic-title">${topic}</h2>
+          <p class="topic-desc">${topicDescriptions[topic]}</p>
+          <div class="meta">${topicMeta[topic]}</div>
+          <div class="actions">
+            <button class="primary">Start ${topic}</button>
+          </div>
+        `;
+        card.querySelector("button").addEventListener("click", () => startGame(topic));
+        topicGrid.appendChild(card);
+      });
+    }
+
+    function startGame(topic) {
+      currentTopic = topic;
+      currentQuestions = shuffle(questions[topic]).map(q => ({ ...q, options: shuffle(q.options) }));
+      currentIndex = 0;
+      score = 0;
+      topicSection.classList.add("hidden");
+      resultSection.classList.add("hidden");
+      gameSection.classList.remove("hidden");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = currentQuestions[currentIndex];
+      topicLabel.textContent = currentTopic;
+      progressLabel.textContent = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+      scoreLabel.textContent = `Score: ${score}`;
+      questionText.textContent = q.question;
+      optionsBox.innerHTML = "";
+      explanationBox.classList.add("hidden");
+      explanationBox.innerHTML = "";
+      nextButton.classList.add("hidden");
+
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = option;
+        btn.addEventListener("click", () => selectAnswer(btn, option));
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(button, option) {
+      const q = currentQuestions[currentIndex];
+      const buttons = document.querySelectorAll(".option");
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (option === q.answer) {
+        button.classList.add("correct");
+        score++;
+        scoreLabel.textContent = `Score: ${score}`;
+      } else {
+        button.classList.add("wrong");
+        buttons.forEach(btn => {
+          if (btn.textContent === q.answer) btn.classList.add("correct");
+        });
+      }
+
+      explanationBox.innerHTML = `<strong>${option === q.answer ? "Correct!" : "Correct answer: " + q.answer}</strong><br>${q.explanation}`;
+      explanationBox.classList.remove("hidden");
+      nextButton.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex >= currentQuestions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      gameSection.classList.add("hidden");
+      resultSection.classList.remove("hidden");
+      const total = currentQuestions.length;
+      const percent = Math.round((score / total) * 100);
+      finalScore.textContent = `${score}/${total}`;
+      accuracy.textContent = `${percent}%`;
+      stars.textContent = percent === 100 ? "★★★" : percent >= 70 ? "★★" : percent >= 40 ? "★" : "☆";
+      resultText.textContent = `You finished the ${currentTopic} challenge.`;
+      resultTitle.textContent = score === total ? "Excellent work!" : score >= 3 ? "Nice job!" : "Keep practicing!";
+    }
+
+    function backToTopics() {
+      gameSection.classList.add("hidden");
+      resultSection.classList.add("hidden");
+      topicSection.classList.remove("hidden");
+    }
+
+    nextButton.addEventListener("click", nextQuestion);
+    backButton.addEventListener("click", backToTopics);
+    chooseButton.addEventListener("click", backToTopics);
+    playAgainButton.addEventListener("click", () => startGame(currentTopic));
+
+    renderTopics();
+  </script>
+</body>
+</html>
